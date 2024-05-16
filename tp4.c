@@ -92,16 +92,100 @@ T_Sommet *trouverSuccesseur(T_Sommet *sommet)
     return courant;
 }
 
-// Fonction récursive pour supprimer un élément de l'ABR
-T_Sommet *supprimerElementRec(T_Sommet *sommet1, int element)
+// Fonction récursive pour rechercher un élément dans l'ABR
+T_Sommet *rechercherPereElement(T_Arbre abr, int element)
 {
-    T_Sommet *sommet = rechercherElementRec(sommet1, element);
+    if (abr == NULL || (element >= abr->filsDroit->borneInf && element <= abr->filsDroit->borneSup) ||
+        (element >= abr->filsGauche->borneInf && element <= abr->filsGauche->borneSup))
+    {
+        return abr;
+    }
+    if (element < abr->borneInf)
+    {
+        return rechercherElementRec(abr->filsGauche, element);
+    }
+    else if (element < abr->borneSup)
+    {
+        return rechercherElementRec(abr->filsDroit, element);
+    }
+    else
+    {
+        return NULL;
+    }
+}
+
+// Fonction  pour supprimer un élément de l'ABR
+T_Sommet *supprimerElement(T_Sommet *sommet1, int element)
+{
+    T_Sommet *pere = rechercherPereElement(sommet1, element);
+    int bool;
+    if (pere == NULL)
+    {
+        return NULL;
+    }
+    if (element >= pere->filsDroit->borneInf && element <= pere->filsDroit->borneSup)
+    {
+        T_Sommet *sommet = pere->filsDroit;
+        bool = 1;
+    }
+    else
+    {
+        T_Sommet *sommet = pere->filsGauche;
+        bool = 0;
+    }
     if (sommet == NULL)
     {
         return NULL;
     }
     else
     {
+        // Si c'est element est égale à au moins une borne d'un ensemble
+        if (sommet->borneInf == element || sommet->borneSup == element)
+        {
+            if (sommet->borneInf != element) // si égale à borne sup
+            {
+                sommet->borneSup--;
+            }
+            else if (sommet->borneSup != element) // si égale à borne inf
+            {
+                sommet->borneInf++;
+            }
+            else // si égale à borne sup et inf on doit supprimer le sommet
+            {
+                if (sommet->filsGauche == NULL && sommet->filsDroit == NULL) // si feuille
+                {
+                    free(sommet);
+                    if (bool == 0)
+                    {
+                        pere->filsGauche == NULL;
+                    }
+                    else
+                    {
+                        pere->filsDroit == NULL;
+                    }
+                }
+                else if (sommet->filsGauche == NULL || sommet->filsDroit == NULL) // si un seul fils
+                {
+                    T_Sommet *temp = sommet->filsDroit;
+                    sommet->borneInf = temp->borneInf;
+                    sommet->borneSup = temp->borneSup;
+                    sommet->filsGauche = temp->filsGauche;
+                    sommet->filsDroit = temp->filsDroit;
+                    free(temp);
+                }
+                else
+                { // si deux fils
+                    T_Sommet *suc = trouverSuccesseur(sommet);
+                    sommet->borneInf = suc->borneInf;
+                    sommet->borneSup = suc->borneSup;
+                    supprimerElement()
+                }
+            }
+        }
+        else if (NULL)
+        {
+        }
+
         // Si le sommet n'a qu'un seul enfant ou aucun enfant
         if (sommet->filsGauche == NULL || sommet->filsDroit == NULL)
         {
