@@ -93,31 +93,25 @@ T_Sommet *trouverSuccesseur(T_Sommet *sommet)
 }
 
 // Fonction récursive pour supprimer un élément de l'ABR
-T_Sommet *supprimerElementRec(T_Sommet *sommet, int element)
+T_Sommet *supprimerElementRec(T_Sommet *sommet1, int element)
 {
+    T_Sommet *sommet = rechercherElementRec(sommet1, element);
     if (sommet == NULL)
     {
-        return sommet;
-    }
-
-    if (element < sommet->borneInf)
-    {
-        sommet->filsGauche = supprimerElementRec(sommet->filsGauche, element);
-    }
-    else if (element > sommet->borneSup)
-    {
-        sommet->filsDroit = supprimerElementRec(sommet->filsDroit, element);
+        return NULL;
     }
     else
     {
-        // Trouvé l'élément à supprimer
-
         // Si le sommet n'a qu'un seul enfant ou aucun enfant
-        if (sommet->filsGauche == NULL)
+        if (sommet->filsGauche == NULL || sommet->filsDroit == NULL)
         {
             T_Sommet *temp = sommet->filsDroit;
-            free(sommet);
-            return temp;
+            sommet->borneInf = temp->borneInf;
+            sommet->borneSup = temp->borneSup;
+            sommet->filsGauche = temp->filsGauche;
+            sommet->filsDroit = temp->filsDroit;
+            free(temp);
+            return sommet1;
         }
         else if (sommet->filsDroit == NULL)
         {
@@ -137,12 +131,6 @@ T_Sommet *supprimerElementRec(T_Sommet *sommet, int element)
         sommet->filsDroit = supprimerElementRec(sommet->filsDroit, successeur->borneInf);
     }
     return sommet;
-}
-
-// Fonction pour supprimer un élément de l'ABR
-T_Arbre supprimerElement(T_Arbre abr, int element)
-{
-    return supprimerElementRec(abr, element);
 }
 
 // Fonction pour calculer la taille mémoire occupée par l'ABR
