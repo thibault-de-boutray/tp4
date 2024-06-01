@@ -138,11 +138,11 @@ T_Arbre insererElement(T_Arbre abr, int element)
             abr->borneSup++;
             // trouver le successeur et si  suc = +1 de la branche ,mixer les deux branches
             T_Sommet *suc = successeur(abr, abr);
-            if (suc != NULL && abr->borneSup + 1 == suc->borneInf)
+            if (suc != NULL && abr->borneSup - 1 == suc->borneInf)
             {
                 int temp = suc->borneSup;
                 // fonction pour supprimer le sommet du pred
-                printf("arrive jusqu'a l'appel de la fonction suppr\n");
+
                 supprimerSommet(abr, suc);
                 abr->borneSup = temp;
                 return abr;
@@ -170,12 +170,12 @@ T_Sommet *supprimerSommet(T_Arbre arbre, T_Sommet *sommet)
     }
     else if (sommet->borneSup < arbre->borneInf)
     {
-        printf("gauche %d\n", arbre->borneSup);
+        printf("gauche\n");
         arbre->filsGauche = supprimerSommet(arbre->filsGauche, sommet);
     }
     else if (sommet->borneInf > arbre->borneSup)
     {
-        printf("droite  %d\n", arbre->borneInf);
+        printf("droite\n");
         arbre->filsDroit = supprimerSommet(arbre->filsDroit, sommet);
     }
     else
@@ -186,7 +186,7 @@ T_Sommet *supprimerSommet(T_Arbre arbre, T_Sommet *sommet)
         // Si le sommet n'a qu'un seul fils ou aucun
         if (arbre->filsGauche == NULL && arbre->filsDroit == NULL)
         {
-            printf("suppr feuille %d: %d\n", arbre->borneInf, arbre->borneSup);
+            printf("suppr feuille");
             free(arbre);
             printf("return null\n");
             return NULL;
@@ -206,25 +206,21 @@ T_Sommet *supprimerSommet(T_Arbre arbre, T_Sommet *sommet)
             printf("suppr avec filsgauche");
             return temp;
         }
-        else
-        {
-            printf("sense suppr\n");
-            // Si le sommet a deux enfants, trouver le successeur (le plus petit dans le sous-arbre droit)
-            T_Sommet *temp = min_value_node(arbre->filsDroit);
-            printf("borne inf du suc%d et borne sup du suc %d", temp->borneInf, temp->borneSup);
+        printf("sense suppr\n");
+        // Si le sommet a deux enfants, trouver le successeur (le plus petit dans le sous-arbre droit)
+        T_Sommet *temp = min_value_node(arbre->filsDroit);
+        printf("borne inf du suc%d et borne sup du suc %d", temp->borneInf, temp->borneSup);
 
-            // Copier les valeurs du successeur dans le sommet à supprimer
-            arbre->borneInf = temp->borneInf;
-            arbre->borneSup = temp->borneSup;
+        // Copier les valeurs du successeur dans le sommet à supprimer
+        arbre->borneInf = temp->borneInf;
+        arbre->borneSup = temp->borneSup;
 
-            // Supprimer le successeur
-            arbre->filsDroit = supprimerSommet(arbre->filsDroit, temp);
+        // Supprimer le successeur
+        arbre->filsDroit = supprimerSommet(arbre->filsDroit, temp);
 
-            printf("fin de la fonction suppr");
-            return arbre;
-        }
+        printf("fin de la fonction suppr");
+        return arbre;
     }
-    return arbre;
 }
 
 void printTree(struct Sommet *root, int space)
@@ -298,36 +294,19 @@ int main()
     T_Arbre abr = NULL;
 
     // Insertion des éléments
-    abr = insererElement(abr, 56);
+    abr = insererElement(abr, 20);
+    abr = insererElement(abr, 25);
+    abr = insererElement(abr, 10);
+    abr = insererElement(abr, 15);
+    abr = insererElement(abr, 5);
+    abr = insererElement(abr, 8);
     abr = insererElement(abr, 12);
-    abr = insererElement(abr, 23);
-    abr = insererElement(abr, 25);
-    abr = insererElement(abr, 62);
     abr = insererElement(abr, 14);
-    abr = insererElement(abr, 25);
-    abr = insererElement(abr, 24);
-
-    abr = insererElement(abr, 14);
-
-    abr = insererElement(abr, 25);
-    printf("ABR \n");
+    abr = insererElement(abr, 17);
+    abr = insererElement(abr, 35);
+    abr = insererElement(abr, 40);
     printTree(abr, 0);
     abr = insererElement(abr, 13);
-    printTree(abr, 0);
-    abr = insererElement(abr, 15);
-
-    abr = insererElement(abr, 19);
-    abr = insererElement(abr, 49);
-    printf("ABR \n");
-    printTree(abr, 0);
-    abr = insererElement(abr, 25);
-    abr = insererElement(abr, 48);
-    abr = insererElement(abr, 56);
-    abr = insererElement(abr, 85);
-    abr = insererElement(abr, 74);
-    abr = insererElement(abr, 49);
-    abr = insererElement(abr, 16);
-    abr = insererElement(abr, 35);
 
     printf("ABR avant suppression:\n");
     printTree(abr, 0);
@@ -336,7 +315,7 @@ int main()
     printf("\n");
 
     // Suppression d'un sommet
-    T_Sommet *sommetASupprimer = rechercherElement(abr, 24); // Par exemple, le nœud avec borneInf 10, borneSup 10
+    T_Sommet *sommetASupprimer = rechercherElement(abr, 10); // Par exemple, le nœud avec borneInf 10, borneSup 10
     if (sommetASupprimer != NULL)
     {
         printf("borne inf de l'element a suppr:%d\n", sommetASupprimer->borneInf);
@@ -346,7 +325,7 @@ int main()
     }
 
     // Suppression d'un élément
-    // supprimerElement(abr, 13);
+    supprimerElement(abr, 13);
 
     printf("ABR après suppression:\n");
     printTree(abr, 0);
@@ -370,7 +349,6 @@ int main()
 
     return 0;
 }
-//*/
 
 // Fonction  pour supprimer un élément de l'ABR
 T_Arbre supprimerElement(T_Arbre abr, int element)
@@ -407,3 +385,4 @@ T_Arbre supprimerElement(T_Arbre abr, int element)
         sommet->filsDroit->filsDroit = filsdroit;
     }
 }
+//*/
