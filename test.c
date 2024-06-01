@@ -18,6 +18,7 @@ T_Arbre insererElement(T_Arbre abr, int element);
 T_Sommet *rechercherElement(T_Arbre abr, int element);
 void afficherSommets(T_Arbre abr);
 void afficherElements(T_Arbre abr);
+T_Arbre supprimerElement(T_Arbre abr, int element);
 void tailleMemoire(T_Arbre abr);
 // Fonctions ajoutées
 T_Sommet *min_value_node(T_Sommet *node);
@@ -122,8 +123,6 @@ T_Arbre insererElement(T_Arbre abr, int element)
                 // fonction pour supprimer le sommet du pred
                 supprimerSommet(abr, pred);
                 abr->borneInf = temp;
-                return abr;
-                printf("trop loin");
             }
             return abr;
         }
@@ -141,10 +140,12 @@ T_Arbre insererElement(T_Arbre abr, int element)
             T_Sommet *suc = successeur(abr, abr);
             if (suc != NULL && abr->borneSup - 1 == suc->borneInf)
             {
-                abr->borneSup = suc->borneSup;
+                int temp = suc->borneSup;
                 // fonction pour supprimer le sommet du pred
 
                 supprimerSommet(abr, suc);
+                abr->borneSup = temp;
+                return abr;
             }
             return abr;
         }
@@ -301,9 +302,10 @@ int main()
     abr = insererElement(abr, 8);
     abr = insererElement(abr, 12);
     abr = insererElement(abr, 14);
-    abr = insererElement(abr, 30);
+    abr = insererElement(abr, 17);
     abr = insererElement(abr, 35);
     abr = insererElement(abr, 40);
+    printTree(abr, 0);
     abr = insererElement(abr, 13);
 
     printf("ABR avant suppression:\n");
@@ -312,7 +314,7 @@ int main()
     afficherElements(abr);
     printf("\n");
 
-    // Suppression d'un élément
+    // Suppression d'un sommet
     T_Sommet *sommetASupprimer = rechercherElement(abr, 10); // Par exemple, le nœud avec borneInf 10, borneSup 10
     if (sommetASupprimer != NULL)
     {
@@ -321,6 +323,9 @@ int main()
 
         supprimerSommet(abr, sommetASupprimer);
     }
+
+    // Suppression d'un élément
+    supprimerElement(abr, 13);
 
     printf("ABR après suppression:\n");
     printTree(abr, 0);
@@ -343,5 +348,41 @@ int main()
     printf("\n");
 
     return 0;
+}
+
+// Fonction  pour supprimer un élément de l'ABR
+T_Arbre supprimerElement(T_Arbre abr, int element)
+{
+    T_Sommet *sommet = rechercherElement(abr, element);
+    int bool;
+    if (sommet == NULL)
+    {
+        return NULL;
+    }
+    else if (element == sommet->borneInf || element == sommet->borneSup)
+    {
+        if (element == sommet->borneInf && element == sommet->borneSup)
+        {
+            supprimerSommet(abr, sommet);
+            return abr;
+        }
+        else if (element == sommet->borneInf)
+        {
+            sommet->borneInf++;
+        }
+        else if (element == sommet->borneSup)
+        {
+            sommet->borneSup--;
+        }
+    }
+    else
+    {
+        int borneinf = element + 1, bornesup = sommet->borneSup;
+        sommet->borneSup = element - 1;
+        T_Sommet *filsdroit = sommet->filsDroit;
+        sommet->filsDroit = creerSommet(borneinf);
+        sommet->filsDroit->borneSup = bornesup;
+        sommet->filsDroit->filsDroit = filsdroit;
+    }
 }
 //*/

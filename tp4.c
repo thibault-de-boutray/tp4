@@ -227,23 +227,38 @@ T_Sommet *rechercherPereElement(T_Arbre abr, int element)
 }
 
 // Fonction  pour supprimer un élément de l'ABR
-T_Arbre *supprimerElement(T_Sommet *sommet1, int element)
+T_Arbre *supprimerElement(T_Arbre abr, int element)
 {
-    T_Sommet *pere = rechercherPereElement(sommet1, element);
+    T_Sommet *sommet = rechercherElement(abr, element);
     int bool;
-    if (pere == NULL)
+    if (sommet == NULL)
     {
         return NULL;
     }
-    else if (element >= pere->filsDroit->borneInf && element <= pere->filsDroit->borneSup)
+    else if (element == sommet->borneInf || element == sommet->borneSup)
     {
-        T_Sommet *sommet = pere->filsDroit;
-        bool = 1;
+        if (element == sommet->borneInf && element == sommet->borneSup)
+        {
+            supprimerSommet(abr, sommet);
+            return abr;
+        }
+        else if (element == sommet->borneInf)
+        {
+            sommet->borneInf++;
+        }
+        else if (element == sommet->borneSup)
+        {
+            sommet->borneSup--;
+        }
     }
     else
     {
-        T_Sommet *sommet = pere->filsGauche;
-        bool = 0;
+        int borneinf = element + 1, bornesup = sommet->borneSup;
+        sommet->borneSup = element - 1;
+        T_Sommet *filsdroit = sommet->filsDroit;
+        sommet->filsDroit = creerSommet(borneinf);
+        sommet->filsDroit->borneSup = bornesup;
+        sommet->filsDroit->filsDroit = filsdroit;
     }
     if (sommet == NULL)
     {
