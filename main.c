@@ -68,7 +68,10 @@ int main()
             scanf("%d", &element);
             abr = supprimerElement(abr, element);
             break;
-
+        case 7:
+            printf("Quitter...\n");
+            libererMemoire(abr);
+            break;
         default:
             printf("Option invalide, veuillez réessayer.\n");
             break;

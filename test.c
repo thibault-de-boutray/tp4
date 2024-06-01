@@ -26,6 +26,7 @@ T_Sommet *max_value_node(T_Sommet *node);
 T_Sommet *successeur(T_Arbre root, T_Sommet *node);
 T_Sommet *predecesseur(T_Arbre root, T_Sommet *node);
 T_Sommet *supprimerSommet(T_Arbre arbre, T_Sommet *sommet);
+void liberermemoire(T_Arbre arbre);
 
 // Fonction pour trouver le nœud avec la plus petite borneInf dans un sous-arbre
 T_Sommet *min_value_node(T_Sommet *node)
@@ -310,16 +311,14 @@ int main()
     abr = insererElement(abr, 14);
 
     abr = insererElement(abr, 25);
-    printf("ABR \n");
-    printTree(abr, 0);
+
     abr = insererElement(abr, 13);
-    printTree(abr, 0);
+
     abr = insererElement(abr, 15);
 
     abr = insererElement(abr, 19);
     abr = insererElement(abr, 49);
-    printf("ABR \n");
-    printTree(abr, 0);
+
     abr = insererElement(abr, 25);
     abr = insererElement(abr, 48);
     abr = insererElement(abr, 56);
@@ -342,13 +341,13 @@ int main()
         printf("borne inf de l'element a suppr:%d\n", sommetASupprimer->borneInf);
         printf("borne sup de l'element a suppr:%d\n", sommetASupprimer->borneSup);
 
-        supprimerSommet(abr, sommetASupprimer);
+        supprimerElement(abr, 24);
     }
 
     // Suppression d'un élément
     // supprimerElement(abr, 13);
 
-    printf("ABR après suppression:\n");
+    printf("ABR après suppression:hehe\n");
     printTree(abr, 0);
     printf("\n");
 
@@ -406,4 +405,19 @@ T_Arbre supprimerElement(T_Arbre abr, int element)
         sommet->filsDroit->borneSup = bornesup;
         sommet->filsDroit->filsDroit = filsdroit;
     }
+}
+
+void liberermemoire(T_Arbre arbre)
+{
+    if (arbre != NULL)
+    {
+        T_Sommet *sommet = arbre;
+        liberermemoire(arbre->filsGauche);
+        liberermemoire(arbre->filsDroit);
+        free(arbre);
+    }
+}
+
+void tailleMemoire(T_Arbre abr)
+{
 }
