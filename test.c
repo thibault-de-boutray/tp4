@@ -118,8 +118,8 @@ T_Arbre insererElement(T_Arbre abr, int element)
             printf("ouaf\n");
             if (pred != NULL && abr->borneInf - 1 == pred->borneSup)
             {
-                printf("ouafsf\n");
                 abr->borneInf = pred->borneInf;
+                printf("arrive jusqu'a l'appel de la fonction suppr\n");
                 // fonction pour supprimer le sommet du pred
                 supprimerSommet(abr, pred);
             }
@@ -163,6 +163,7 @@ T_Sommet *supprimerSommet(T_Arbre arbre, T_Sommet *sommet)
     printf("lal");
     if (arbre == NULL)
     {
+        printf("arbre null");
         return arbre;
     }
     if (sommet->borneInf < arbre->borneInf)
@@ -204,6 +205,27 @@ T_Sommet *supprimerSommet(T_Arbre arbre, T_Sommet *sommet)
         arbre->filsDroit = supprimerSommet(arbre->filsDroit, temp);
     }
     return arbre;
+}
+
+void printTree(struct Sommet *root, int space)
+{
+    if (root == NULL)
+        return;
+
+    // Augmenter la distance entre les niveaux
+    space += 10;
+
+    // Afficher le sous-arbre gauche
+    printTree(root->filsDroit, space);
+
+    // Imprimer le nœud courant après l'espace
+    printf("\n");
+    for (int i = 10; i < space; i++)
+        printf(" ");
+    printf("[%d;%d]\n", root->borneInf, root->borneSup);
+
+    // Afficher le sous-arbre droit
+    printTree(root->filsGauche, space);
 }
 
 // Fonction récursive pour rechercher un élément dans l'ABR
@@ -267,7 +289,8 @@ int main()
     abr = insererElement(abr, 30);
     abr = insererElement(abr, 35);
     abr = insererElement(abr, 40);
-    afficherSommets(abr);
+    // afficherSommets(abr);
+    printTree(abr, 0);
     abr = insererElement(abr, 13);
 
     printf("ABR avant suppression:\n");
