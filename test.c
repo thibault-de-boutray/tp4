@@ -115,13 +115,15 @@ T_Arbre insererElement(T_Arbre abr, int element)
             abr->borneInf--;
             // trouver le predecesseur et si les ensembles sont collés ,mixer les deux branches
             T_Sommet *pred = predecesseur(abr, abr); // A préciser dans le rapport, on juste besoin du sous arbre, si le predecesseur est plus haut dans l'arbre alors il n'est pas collé à l'élément
-            printf("ouaf\n");
             if (pred != NULL && abr->borneInf - 1 == pred->borneSup)
             {
-                abr->borneInf = pred->borneInf;
+                int temp = pred->borneInf;
                 printf("arrive jusqu'a l'appel de la fonction suppr\n");
                 // fonction pour supprimer le sommet du pred
                 supprimerSommet(abr, pred);
+                abr->borneInf = temp;
+                return abr;
+                printf("trop loin");
             }
             return abr;
         }
@@ -160,30 +162,40 @@ T_Arbre insererElement(T_Arbre abr, int element)
 
 T_Sommet *supprimerSommet(T_Arbre arbre, T_Sommet *sommet)
 {
-    printf("lal");
     if (arbre == NULL)
     {
         printf("arbre null");
         return arbre;
     }
-    if (sommet->borneInf < arbre->borneInf)
+    if (sommet->borneSup < arbre->borneInf)
     {
         printf("gauche\n");
         arbre->filsGauche = supprimerSommet(arbre->filsGauche, sommet);
     }
-    else if (sommet->borneSup > arbre->borneSup)
+    else if (sommet->borneInf > arbre->borneSup)
     {
         printf("droite\n");
         arbre->filsDroit = supprimerSommet(arbre->filsDroit, sommet);
     }
     else
     {
+
+        printf("wtf?%d\n", arbre->borneInf);
         // Si le sommet à supprimer est trouvé
 
         // Si le sommet n'a qu'un seul fils ou aucun
-        if (arbre->filsGauche == NULL)
+        if (arbre->filsGauche == NULL && arbre->filsDroit == NULL)
+        {
+            printf("suppr feuille");
+
+            free(arbre);
+            return NULL;
+        }
+        else if (arbre->filsGauche == NULL)
         {
             T_Sommet *temp = arbre->filsDroit;
+            printf("suppr avec filsdroit");
+
             free(arbre);
             return temp;
         }
@@ -191,9 +203,10 @@ T_Sommet *supprimerSommet(T_Arbre arbre, T_Sommet *sommet)
         {
             T_Sommet *temp = arbre->filsGauche;
             free(arbre);
+            printf("suppr avec filsgauche");
             return temp;
         }
-
+        printf("sense suppr");
         // Si le sommet a deux enfants, trouver le successeur (le plus petit dans le sous-arbre droit)
         T_Sommet *temp = min_value_node(arbre->filsDroit);
 
@@ -202,9 +215,12 @@ T_Sommet *supprimerSommet(T_Arbre arbre, T_Sommet *sommet)
         arbre->borneSup = temp->borneSup;
 
         // Supprimer le successeur
+        printf("fin de la fonction suppr");
         arbre->filsDroit = supprimerSommet(arbre->filsDroit, temp);
+
+        printf("fin de la fonction suppr");
+        return arbre;
     }
-    return arbre;
 }
 
 void printTree(struct Sommet *root, int space)
