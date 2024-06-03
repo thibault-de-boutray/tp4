@@ -91,11 +91,13 @@ T_Arbre insererElement(T_Arbre abr, int element)
             abr->borneInf--;
             // trouver le predecesseur et si les ensembles sont collés ,mixer les deux branches
             T_Sommet *pred = predecesseur(abr, abr); // A préciser dans le rapport, on juste besoin du sous arbre, si le predecesseur est plus haut dans l'arbre alors il n'est pas collé à l'élément
-            if (abr->borneInf - 1 == pred->borneSup)
+            if (pred != NULL && abr->borneInf - 1 == pred->borneSup)
             {
-                abr->borneInf = pred->borneInf;
+                int temp = pred->borneInf;
+                printf("arrive jusqu'a l'appel de la fonction suppr\n");
                 // fonction pour supprimer le sommet du pred
                 supprimerSommet(abr, pred);
+                abr->borneInf = temp;
             }
             return abr;
         }
@@ -111,11 +113,14 @@ T_Arbre insererElement(T_Arbre abr, int element)
             abr->borneSup++;
             // trouver le successeur et si  suc = +1 de la branche ,mixer les deux branches
             T_Sommet *suc = successeur(abr, abr);
-            if (abr->borneSup - 1 == suc->borneInf)
+            if (suc != NULL && abr->borneSup + 1 == suc->borneInf)
             {
-                abr->borneSup = suc->borneSup;
+                int temp = suc->borneSup;
                 // fonction pour supprimer le sommet du pred
+                printf("arrive jusqu'a l'appel de la fonction suppr\n");
                 supprimerSommet(abr, suc);
+                abr->borneSup = temp;
+                return abr;
             }
             return abr;
         }
@@ -131,31 +136,91 @@ T_Arbre insererElement(T_Arbre abr, int element)
     return abr;
 }
 
-T_Sommet *supprimerSommet(T_Arbre *arbre, T_Sommet *sommet)
+T_Sommet *supprimerSommet(T_Arbre arbre, T_Sommet *sommet)
 {
-    T_Sommet *abr = arbre;
-    if (abr == NULL)
+    if (arbre == NULL)
     {
-        return abr;
+        printf("arbre null");
+        return arbre;
     }
-    // prendre en compte les cas où un seul fils
-    else if (abr->borneInf < sommet->borneSup && abr->filsDroit != sommet)
+    else if (sommet->borneSup < arbre->borneInf)
     {
-        return supprimerSommet(abr->filsDroit, sommet);
+        printf("gauche %d\n", arbre->borneSup);
+        arbre->filsGauche = supprimerSommet(arbre->filsGauche, sommet);
     }
-    else if (abr->borneSup >= sommet->borneInf && abr->filsGauche != sommet)
+    else if (sommet->borneInf > arbre->borneSup)
     {
-        return supprimerSommet(abr->filsGauche, sommet);
+        printf("droite  %d\n", arbre->borneInf);
+        arbre->filsDroit = supprimerSommet(arbre->filsDroit, sommet);
     }
-    else if (abr->filsDroit == sommet)
+    else
     {
-        if (abr->filsDroit->filsDroit == NULL || abr->filsDroit->filsGauche == NULL)
+
+        printf("wtf?%d\n", arbre->borneInf);
+
+        // Si le sommet n'a qu'un seul fils ou aucun
+        if (arbre->filsGauche == NULL && arbre->filsDroit == NULL)
         {
+            printf("suppr feuille %d: %d\n", arbre->borneInf, arbre->borneSup);
+            free(arbre);
+            printf("return null\n");
+            return NULL;
+        }
+        else if (arbre->filsGauche == NULL)
+        {
+            T_Sommet *temp = arbre->filsDroit;
+            printf("suppr avec filsdroit");
+
+            free(arbre);
+            return temp;
+        }
+        else if (arbre->filsDroit == NULL)
+        {
+            T_Sommet *temp = arbre->filsGauche;
+            free(arbre);
+            printf("suppr avec filsgauche");
+            return temp;
+        }
+        else
+        {
+            printf("sense suppr\n");
+            // Si le sommet a deux enfants, trouver le successeur (le plus petit dans le sous-arbre droit)
+            T_Sommet *temp = min_value_node(arbre->filsDroit);
+            printf("borne inf du suc%d et borne sup du suc %d", temp->borneInf, temp->borneSup);
+
+            // Copier les valeurs du successeur dans le sommet à supprimer
+            arbre->borneInf = temp->borneInf;
+            arbre->borneSup = temp->borneSup;
+
+            // Supprimer le successeur
+            arbre->filsDroit = supprimerSommet(arbre->filsDroit, temp);
+
+            printf("fin de la fonction suppr");
+            return arbre;
         }
     }
-    else if (abr->filsDroit == sommet)
-    {
-    }
+    return arbre;
+}
+
+void printTree(T_Sommet *root, int space)
+{
+    if (root == NULL)
+        return;
+
+    // Augmenter la distance entre les niveaux
+    space += 10;
+
+    // Afficher le sous-arbre gauche
+    printTree(root->filsDroit, space);
+
+    // Imprimer le nœud courant après l'espace
+    printf("\n");
+    for (int i = 10; i < space; i++)
+        printf(" ");
+    printf("[%d;%d]\n", root->borneInf, root->borneSup);
+
+    // Afficher le sous-arbre droit
+    printTree(root->filsGauche, space);
 }
 
 // Fonction récursive pour rechercher un élément dans l'ABR
@@ -169,13 +234,9 @@ T_Sommet *rechercherElement(T_Arbre abr, int element)
     {
         return rechercherElement(abr->filsGauche, element);
     }
-    else if (element < abr->borneSup)
+    else
     {
         return rechercherElement(abr->filsDroit, element);
-    }
-    else // Peut être peut supprimer ça car si l'abr est null on le renvoie déjà plus haut
-    {
-        return NULL;
     }
 }
 
@@ -204,30 +265,8 @@ void afficherElements(T_Arbre abr)
     }
 }
 
-// Fonction récursive pour rechercher un élément dans l'ABR
-T_Sommet *rechercherPereElement(T_Arbre abr, int element)
-{
-    if (abr == NULL || (element >= abr->filsDroit->borneInf && element <= abr->filsDroit->borneSup) ||
-        (element >= abr->filsGauche->borneInf && element <= abr->filsGauche->borneSup))
-    {
-        return abr;
-    }
-    if (element < abr->borneInf)
-    {
-        return rechercherElement(abr->filsGauche, element);
-    }
-    else if (element < abr->borneSup)
-    {
-        return rechercherElement(abr->filsDroit, element);
-    }
-    else
-    {
-        return NULL;
-    }
-}
-
 // Fonction  pour supprimer un élément de l'ABR
-T_Arbre *supprimerElement(T_Arbre abr, int element)
+T_Arbre supprimerElement(T_Arbre abr, int element)
 {
     T_Sommet *sommet = rechercherElement(abr, element);
     int bool;
@@ -260,108 +299,19 @@ T_Arbre *supprimerElement(T_Arbre abr, int element)
         sommet->filsDroit->borneSup = bornesup;
         sommet->filsDroit->filsDroit = filsdroit;
     }
-    if (sommet == NULL)
-    {
-        return NULL;
-    }
-    else
-    {
-        // Si c'est element est égale à au moins une borne d'un ensemble
-        if (sommet->borneInf == element || sommet->borneSup == element)
-        {
-            if (sommet->borneInf != element) // si égale à borne sup
-            {
-                sommet->borneSup--;
-            }
-            else if (sommet->borneSup != element) // si égale à borne inf
-            {
-                sommet->borneInf++;
-            }
-            else // si égale à borne sup et inf on doit supprimer le sommet
-            {
-                if (sommet->filsGauche == NULL && sommet->filsDroit == NULL) // si feuille
-                {
-                    free(sommet);
-                    if (bool == 0)
-                    {
-                        pere->filsGauche == NULL;
-                    }
-                    else
-                    {
-                        pere->filsDroit == NULL;
-                    }
-                }
-                else if (sommet->filsGauche == NULL || sommet->filsDroit == NULL) // si un seul fils
-                {
-                    T_Sommet *temp = sommet->filsDroit;
-                    sommet->borneInf = temp->borneInf;
-                    sommet->borneSup = temp->borneSup;
-                    sommet->filsGauche = temp->filsGauche;
-                    sommet->filsDroit = temp->filsDroit;
-                    free(temp);
-                }
-                else
-                { // si deux fils
-                    T_Sommet *suc = trouverSuccesseur(sommet);
-                    sommet->borneInf = suc->borneInf;
-                    sommet->borneSup = suc->borneSup;
-                    // supprimerElement();
-                }
-            }
-        }
-        else if (NULL)
-        {
-        }
-
-        // Si le sommet n'a qu'un seul enfant ou aucun enfant
-        if (sommet->filsGauche == NULL || sommet->filsDroit == NULL)
-        {
-            T_Sommet *temp = sommet->filsDroit;
-            sommet->borneInf = temp->borneInf;
-            sommet->borneSup = temp->borneSup;
-            sommet->filsGauche = temp->filsGauche;
-            sommet->filsDroit = temp->filsDroit;
-            free(temp);
-            return sommet1;
-        }
-        else if (sommet->filsDroit == NULL)
-        {
-            T_Sommet *temp = sommet->filsGauche;
-            free(sommet);
-            return temp;
-        }
-
-        // Si le sommet a deux enfants, obtenir le successeur
-        T_Sommet *successeur = trouverSuccesseur(sommet);
-
-        // Copier les données du successeur au sommet courant
-        sommet->borneInf = successeur->borneInf;
-        sommet->borneSup = successeur->borneSup;
-
-        // Supprimer le successeur
-        sommet->filsDroit = supprimerElementRec(sommet->filsDroit, successeur->borneInf);
-    }
-    return sommet;
 }
 
-// Fonction pour calculer la taille mémoire occupée par l'ABR
-void tailleMemoireRec(T_Arbre abr, int *taille)
+void liberermemoire(T_Arbre arbre)
 {
-    if (abr != NULL)
+    if (arbre != NULL)
     {
-        *taille += sizeof(T_Sommet);
-        tailleMemoireRec(abr->filsGauche, taille);
-        tailleMemoireRec(abr->filsDroit, taille);
+        T_Sommet *sommet = arbre;
+        liberermemoire(sommet->filsGauche);
+        liberermemoire(sommet->filsDroit);
+        free(sommet);
     }
 }
 
-// Fonction pour afficher la taille mémoire
 void tailleMemoire(T_Arbre abr)
 {
-    int tailleReelle = 0;
-    int tailleClassique = 0;
-    tailleMemoireRec(abr, &tailleReelle);
-    tailleClassique = sizeof(T_Sommet) * (abr == NULL ? 0 : 2);
-    printf("Taille réelle de l'ABR en octets : %d\n", tailleReelle);
-    printf("Taille d'un ABR classique en octets : %d\n", tailleClassique);
 }
