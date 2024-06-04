@@ -319,7 +319,7 @@ int tailleMemoireensemble(T_Arbre abr)
 {
     if (abr != NULL)
     {
-        return sizeof(int) + 2 * sizeof() + tailleMemoireensemble(abr->filsGauche) + tailleMemoireensemble(abr->filsGauche);
+        return 2 * sizeof(int) + 2 * sizeof(abr->filsDroit) + tailleMemoireensemble(abr->filsDroit) + tailleMemoireensemble(abr->filsGauche);
     }
     else
     {
@@ -329,21 +329,36 @@ int tailleMemoireensemble(T_Arbre abr)
 
 int tailleMemoireclassique(T_Arbre abr)
 {
+    if (abr != NULL)
+    {
+        1 + tailleMemoireclassique(abr->filsGauche) + tailleMemoireclassique(abr->filsDroit);
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 int tailleMemoireensemble(T_Arbre abr)
 {
-    int ensemble = tailleMemoireensemble(abr);
-    int abrclassique = tailleMemoireclassique(abr);
-    int gain = abrclassique - ensemble;
-    printf("taille en octets de l'ABR avec ensemble: %d\n", ensemble);
-    printf("taille en octets de l'ABR classique: %d\n", abrclassique);
-    if (gain >= 0)
+    if (abr == NULL)
     {
-        printf("Vous avez gagn%c %d octets!", 130, gain);
+        printf("ABR null");
     }
     else
     {
-        printf("Vous avez perdu %d octets :/", -gain);
+        int ensemble = tailleMemoireensemble(abr);
+        int abrclassique = tailleMemoireclassique(abr) * (sizeof(int) + 2 * sizeof(abr->filsDroit));
+        int gain = abrclassique - ensemble;
+        printf("taille en octets de l'ABR avec ensemble: %d\n", ensemble);
+        printf("taille en octets de l'ABR classique: %d\n", abrclassique);
+        if (gain >= 0)
+        {
+            printf("Vous avez gagn%c %d octets!", 130, gain);
+        }
+        else
+        {
+            printf("Vous avez perdu %d octets :/", -gain);
+        }
     }
 }
