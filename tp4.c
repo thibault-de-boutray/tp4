@@ -315,6 +315,35 @@ void liberermemoire(T_Arbre arbre)
     }
 }
 
-void tailleMemoire(T_Arbre abr)
+int tailleMemoireensemble(T_Arbre abr)
 {
+    if (abr != NULL)
+    {
+        return sizeof(int) + 2 * sizeof() + tailleMemoireensemble(abr->filsGauche) + tailleMemoireensemble(abr->filsGauche);
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+int tailleMemoireclassique(T_Arbre abr)
+{
+}
+
+int tailleMemoireensemble(T_Arbre abr)
+{
+    int ensemble = tailleMemoireensemble(abr);
+    int abrclassique = tailleMemoireclassique(abr);
+    int gain = abrclassique - ensemble;
+    printf("taille en octets de l'ABR avec ensemble: %d\n", ensemble);
+    printf("taille en octets de l'ABR classique: %d\n", abrclassique);
+    if (gain >= 0)
+    {
+        printf("Vous avez gagn%c %d octets!", 130, gain);
+    }
+    else
+    {
+        printf("Vous avez perdu %d octets :/", -gain);
+    }
 }
