@@ -1,19 +1,40 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "tp4.c"
+
+void clearScreen() {
+    #ifdef _WIN32
+        system("cls");
+        system("chcp 65001");
+    #else
+        system("clear");
+    #endif
+}
+
+
+void waitForEnter()
+{
+    printf("\nAppuyez sur Entrée pour revenir au menu...");
+    while (getchar() != '\n')
+        ;
+    getchar();
+}
+
 
 void afficherMenu()
 {
     printf("\nMenu:\n");
-    printf("1. Ins%crer N %cl%cments\n", 130, 130, 130);
-    printf("2. Rechercher un %cl%cment\n", 130, 130);
+    printf("1. Insérer N éléments\n");
+    printf("2. Rechercher un élément\n");
     printf("3. Afficher tous les sommets\n");
-    printf("4. Afficher tous les %cl%cments\n", 130, 130);
-    printf("5. Supprimer un %cl%cment\n", 130, 130);
-    printf("6. Afficher la taille en m%cmoire\n", 130);
+    printf("4. Afficher tous les éléments\n");
+    printf("5. Supprimer un élément\n");
+    printf("6. Afficher la taille en mémoire\n");
     printf("7. Quitter\n");
     printf("Choisissez une option: ");
 }
+
 
 int main()
 {
@@ -28,27 +49,27 @@ int main()
         switch (choix)
         {
         case 1:
-            printf("Combien d'%cl%cments voulez-vous ins%crer ? ", 130, 130, 130);
+            printf("Combien d'éléments voulez-vous insécrer ? ");
             scanf("%d", &N);
             for (int i = 0; i < N; i++)
             {
-                printf("Entrez l'%cl%cment %d: ", 130, 130, i + 1);
+                printf("Entrez l'élément %d: ", i + 1);
                 scanf("%d", &element);
                 abr = insererElement(abr, element);
             }
             break;
 
         case 2:
-            printf("Entrez l'%cl%cment %c rechercher: ", 130, 130, 133);
+            printf("Entrez l'élément à rechercher: ");
             scanf("%d", &element);
             T_Sommet *recherche = rechercherElement(abr, element);
             if (recherche != NULL)
             {
-                printf("L'%cl%cment %d se trouve dans l'ensemble [%d, %d]\n", 130, 130, element, recherche->borneInf, recherche->borneSup);
+                printf("L'élément %d se trouve dans l'ensemble [%d, %d]\n",  element, recherche->borneInf, recherche->borneSup);
             }
             else
             {
-                printf("L'%cl%cment %d n'a pas %ct%c trouv%c dans l'ABR\n", 130, 130, element, 130, 130, 130);
+                printf("L'élément %d n'a pas été trouvé dans l'ABR\n", element, 130, 130, 130);
             }
             break;
 
@@ -58,15 +79,16 @@ int main()
             break;
 
         case 4:
-            printf("Affichage de tous les %cl%cments:\n", 130, 130);
+            printf("Affichage de tous les écléments:\n");
             afficherElements(abr);
             printf("\n");
             break;
 
         case 5:
-            printf("Entrez l'%cl%cment %c supprimer: ", 130, 130, 133);
+            printf("Entrez l'élément à supprimer: ");
             scanf("%d", &element);
             abr = supprimerElement(abr, element);
+            printf("\n");
             break;
         case 6:
             tailleMemoire(abr);
@@ -78,8 +100,11 @@ int main()
             break;
 
         default:
-            printf("Option invalide, veuillez r%cessayer.\n", 130);
+            printf("Option invalide, veuillez réessayer.\n");
             break;
+        }
+        if (choix!=7){
+            waitForEnter();
         }
     } while (choix != 7);
 
