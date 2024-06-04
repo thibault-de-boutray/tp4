@@ -284,10 +284,12 @@ T_Arbre supprimerElement(T_Arbre abr, int element)
         else if (element == sommet->borneInf)
         {
             sommet->borneInf++;
+            return abr;
         }
         else if (element == sommet->borneSup)
         {
             sommet->borneSup--;
+            return abr;
         }
     }
     else
@@ -298,6 +300,7 @@ T_Arbre supprimerElement(T_Arbre abr, int element)
         sommet->filsDroit = creerSommet(borneinf);
         sommet->filsDroit->borneSup = bornesup;
         sommet->filsDroit->filsDroit = filsdroit;
+        return abr;
     }
 }
 
