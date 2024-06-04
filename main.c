@@ -68,6 +68,9 @@ int main()
             scanf("%d", &element);
             abr = supprimerElement(abr, element);
             break;
+        case 6:
+            tailleMemoire(abr);
+            break;
 
         case 7:
             printf("Quitter...\n");

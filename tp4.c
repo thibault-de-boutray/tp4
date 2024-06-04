@@ -319,7 +319,7 @@ int tailleMemoireensemble(T_Arbre abr)
 {
     if (abr != NULL)
     {
-        return 2 * sizeof(int) + 2 * sizeof(abr->filsDroit) + tailleMemoireensemble(abr->filsDroit) + tailleMemoireensemble(abr->filsGauche);
+        return 2 * sizeof(int) + 2 * sizeof(&abr->filsDroit) + tailleMemoireensemble(abr->filsDroit) + tailleMemoireensemble(abr->filsGauche);
     }
     else
     {
@@ -331,7 +331,8 @@ int tailleMemoireclassique(T_Arbre abr)
 {
     if (abr != NULL)
     {
-        1 + tailleMemoireclassique(abr->filsGauche) + tailleMemoireclassique(abr->filsDroit);
+        int sup = abr->borneSup + 1, inf = abr->borneInf;
+        return sup - inf + tailleMemoireclassique(abr->filsGauche) + tailleMemoireclassique(abr->filsDroit);
     }
     else
     {
@@ -339,7 +340,7 @@ int tailleMemoireclassique(T_Arbre abr)
     }
 }
 
-int tailleMemoireensemble(T_Arbre abr)
+void tailleMemoire(T_Arbre abr)
 {
     if (abr == NULL)
     {
@@ -348,7 +349,7 @@ int tailleMemoireensemble(T_Arbre abr)
     else
     {
         int ensemble = tailleMemoireensemble(abr);
-        int abrclassique = tailleMemoireclassique(abr) * (sizeof(int) + 2 * sizeof(abr->filsDroit));
+        int abrclassique = tailleMemoireclassique(abr) * (sizeof(int) + 2 * sizeof(&abr->filsDroit));
         int gain = abrclassique - ensemble;
         printf("taille en octets de l'ABR avec ensemble: %d\n", ensemble);
         printf("taille en octets de l'ABR classique: %d\n", abrclassique);
