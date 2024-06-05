@@ -227,7 +227,7 @@ T_Arbre supprimerElement(T_Arbre abr, int element)
     T_Sommet *sommet = rechercherElement(abr, element);
     if (sommet == NULL)
     {
-        return NULL;
+        return abr;
     }
     else if (element == sommet->borneInf || element == sommet->borneSup)
     {
