@@ -310,7 +310,7 @@ void tailleMemoire(T_Arbre abr)
         printf("taille en octets de l'ABR classique: %d\n", abrclassique);
         if (gain >= 0)
         {
-            printf("Vous avez gagn%c %d octets!", 130, gain);
+            printf("Vous avez gagné %d octets!", gain);
         }
         else
         {
