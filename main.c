@@ -3,15 +3,15 @@
 #include <string.h>
 #include "tp4.c"
 
-void clearScreen() {
-    #ifdef _WIN32
-        system("cls");
-        system("chcp 65001");
-    #else
-        system("clear");
-    #endif
+void clearScreen()
+{
+#ifdef _WIN32
+    system("cls");
+    system("chcp 65001");
+#else
+    system("clear");
+#endif
 }
-
 
 void waitForEnter()
 {
@@ -20,7 +20,6 @@ void waitForEnter()
         ;
     getchar();
 }
-
 
 void afficherMenu()
 {
@@ -35,7 +34,6 @@ void afficherMenu()
     printf("Choisissez une option: ");
 }
 
-
 int main()
 {
     T_Arbre abr = NULL;
@@ -49,7 +47,7 @@ int main()
         switch (choix)
         {
         case 1:
-            printf("Combien d'éléments voulez-vous insécrer ? ");
+            printf("Combien d'éléments voulez-vous insérer ? ");
             scanf("%d", &N);
             for (int i = 0; i < N; i++)
             {
@@ -65,7 +63,7 @@ int main()
             T_Sommet *recherche = rechercherElement(abr, element);
             if (recherche != NULL)
             {
-                printf("L'élément %d se trouve dans l'ensemble [%d, %d]\n",  element, recherche->borneInf, recherche->borneSup);
+                printf("L'élément %d se trouve dans l'ensemble [%d, %d]\n", element, recherche->borneInf, recherche->borneSup);
             }
             else
             {
@@ -103,7 +101,8 @@ int main()
             printf("Option invalide, veuillez réessayer.\n");
             break;
         }
-        if (choix!=7){
+        if (choix != 7)
+        {
             waitForEnter();
         }
     } while (choix != 7);

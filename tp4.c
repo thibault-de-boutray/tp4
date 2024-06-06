@@ -23,7 +23,7 @@ T_Sommet *successeur(T_Arbre root, T_Sommet *node)
     if (node->filsDroit != NULL)
         return min_value_node(node->filsDroit);
 
-    T_Sommet *succ = NULL;
+    /*T_Sommet *succ = NULL;
     T_Sommet *ancestor = root;
     while (ancestor != NULL)
     {
@@ -37,7 +37,8 @@ T_Sommet *successeur(T_Arbre root, T_Sommet *node)
             ancestor = ancestor->filsDroit;
         }
     }
-    return succ;
+    return succ;*/
+    return NULL;
 }
 
 T_Sommet *predecesseur(T_Arbre root, T_Sommet *node)
@@ -45,7 +46,7 @@ T_Sommet *predecesseur(T_Arbre root, T_Sommet *node)
     if (node->filsGauche != NULL)
         return max_value_node(node->filsGauche);
 
-    T_Sommet *pred = NULL;
+    /*T_Sommet *pred = NULL;
     T_Sommet *ancestor = root;
     while (ancestor != NULL)
     {
@@ -59,7 +60,8 @@ T_Sommet *predecesseur(T_Arbre root, T_Sommet *node)
             ancestor = ancestor->filsGauche;
         }
     }
-    return pred;
+    return pred;*/
+    return NULL;
 }
 
 T_Sommet *creerSommet(int element)
