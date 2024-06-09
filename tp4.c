@@ -201,13 +201,13 @@ T_Sommet *rechercherElement(T_Arbre abr, int element)
     }
 }
 
-void afficherSommets(T_Arbre abr)
+void printTree(T_Arbre abr)
 {
     if (abr != NULL)
     {
-        afficherSommets(abr->filsGauche);
+        printTree(abr->filsGauche);
         printf("[%d;%d] ", abr->borneInf, abr->borneSup);
-        afficherSommets(abr->filsDroit);
+       printTree(abr->filsDroit);
     }
 }
 
