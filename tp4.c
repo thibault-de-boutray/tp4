@@ -171,18 +171,18 @@ T_Sommet *supprimerSommet(T_Arbre arbre, T_Sommet *sommet)
     return arbre;
 }
 
-void  afficherSommets(T_Sommet *root, int space)
+void  printTree(T_Sommet *root, int space)
 {
     if (root == NULL)
         return;
 
     space += 10;
-     afficherSommets(root->filsDroit, space);
+     printTree(root->filsDroit, space);
     printf("\n");
     for (int i = 10; i < space; i++)
         printf(" ");
     printf("[%d;%d]\n", root->borneInf, root->borneSup);
-     afficherSommets(root->filsGauche, space);
+     printTree(root->filsGauche, space);
 }
 
 T_Sommet *rechercherElement(T_Arbre abr, int element)
@@ -201,13 +201,13 @@ T_Sommet *rechercherElement(T_Arbre abr, int element)
     }
 }
 
-void printTree(T_Arbre abr)
+void afficherSommets(T_Arbre abr)
 {
     if (abr != NULL)
     {
-        printTree(abr->filsGauche);
+        afficherSommets(abr->filsGauche);
         printf("[%d;%d] ", abr->borneInf, abr->borneSup);
-       printTree(abr->filsDroit);
+        afficherSommets(abr->filsDroit);
     }
 }
 
